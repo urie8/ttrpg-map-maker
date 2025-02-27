@@ -1,82 +1,87 @@
-import React, { useEffect, useRef } from "react";
-import styled from "styled-components";
+import React, { useEffect, useState, useRef } from "react";
 
-const StyledCanvas = styled.canvas`
-  margin: 0;
-  padding: 0;
-  display: block;
-  border: 1px solid black;
-  /* These CSS dimensions only affect how the canvas is displayed,
-     not its internal drawing resolution. */
-  width: 100px;
-  height: 100px;
-`;
-
-const postData = {
-  width: 100,
-  height: 100,
-  noisescale: 3,
+const biomes = {
+  WATER: "#1f78b4",
+  BEACH: "#ffe29a",
+  FOREST: "#006400",
+  JUNGLE: "#228b22",
+  SAVANNAH: "#c2b280",
+  DESERT: "#edc9af",
+  SNOW: "#ffffff",
 };
 
-const requestOptions = {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify(postData),
+const getBiomeColor = (e) => {
+  if (e < 0.1) return biomes.WATER;
+  else if (e < 0.2) return biomes.BEACH;
+  else if (e < 0.3) return biomes.FOREST;
+  else if (e < 0.5) return biomes.JUNGLE;
+  else if (e < 0.7) return biomes.SAVANNAH;
+  else if (e < 0.9) return biomes.DESERT;
+  else return biomes.SNOW;
 };
 
 const apiurl = "https://localhost:7085/api/Noise/generate";
 
-const ColourfulCanvas = () => {
+const NoiseCanvas = () => {
+  const [noiseData, setNoiseData] = useState([]);
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    // Ensure the canvas is attached
-    if (!canvasRef.current) {
-      console.error("Canvas ref is not attached");
-      return;
-    }
-    const canvas = canvasRef.current;
+    const postData = {
+      width: 100,
+      height: 100,
+      noisescale: 3,
+    };
 
-    // IMPORTANT: Set the canvas's internal drawing dimensions as numbers.
-    // The element attributes (width and height) determine the drawing resolution.
-    canvas.width = 100;
-    canvas.height = 100;
-
-    const ctx = canvas.getContext("2d");
-    const width = 100;
-    const height = 100;
-    const imageData = ctx.createImageData(width, height);
-
-    fetch(apiurl, requestOptions)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json(); // Consume the response once.
-      })
-      .then((noise) => {
-        console.log("Received noise data:", noise);
-        // Make sure the noise data is in the expected format (a jagged array of numbers).
-        for (let y = 0; y < height; y++) {
-          for (let x = 0; x < width; x++) {
-            const index = (x + y * width) * 4;
-            const value = noise[y][x]; // Note: using noise[y][x]
-            imageData.data[index] = value * 255;
-            imageData.data[index + 1] = value * 255;
-            imageData.data[index + 2] = value * 255;
-            imageData.data[index + 3] = 255;
-          }
-        }
-        ctx.putImageData(imageData, 0, 0);
-      })
-      .catch((error) => {
+    // POST request to fetch noise data
+    const fetchData = async () => {
+      try {
+        const response = await fetch(apiurl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(postData),
+        });
+        const data = await response.json();
+        setNoiseData(data); // Adjust this according to the structure of your JSON
+      } catch (error) {
         console.error("Error fetching noise data:", error);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
-  return <StyledCanvas ref={canvasRef} />;
+  useEffect(() => {
+    // Draw on canvas once data is fetched
+    if (noiseData.length > 0) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+
+      const maxRows = noiseData.length;
+      const maxCols = Math.max(...noiseData.map((row) => row.length));
+
+      const cellWidth = width / maxCols;
+      const cellHeight = height / maxRows;
+
+      noiseData.forEach((row, rowIndex) => {
+        row.forEach((value, colIndex) => {
+          const x = colIndex * cellWidth;
+          const y = rowIndex * cellHeight;
+
+          // Get biome color based on noise value
+          const color = getBiomeColor(value);
+          ctx.fillStyle = color;
+          ctx.fillRect(x, y, cellWidth, cellHeight);
+        });
+      });
+    }
+  }, [noiseData]);
+
+  return <canvas ref={canvasRef} width={500} height={500} />;
 };
 
-export default ColourfulCanvas;
+export default NoiseCanvas;
