@@ -1,23 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
 
 const biomes = {
-  WATER: "#1f78b4",
-  BEACH: "#ffe29a",
-  FOREST: "#006400",
-  JUNGLE: "#228b22",
-  SAVANNAH: "#c2b280",
-  DESERT: "#edc9af",
-  SNOW: "#ffffff",
+  LIGHT_FOREST: "#9acd32", // Yellow Green
+  MEDIUM_FOREST: "#6b8e23", // Olive Drab
+  DENSE_FOREST: "#556b2f", // Dark Olive Green
+  JUNGLE: "#228b22", // Forest Green
+  DARK_FOREST: "#013220", // Very Dark Green
 };
 
 const getBiomeColor = (e) => {
-  if (e < 0.1) return biomes.WATER;
-  else if (e < 0.2) return biomes.BEACH;
-  else if (e < 0.3) return biomes.FOREST;
-  else if (e < 0.5) return biomes.JUNGLE;
-  else if (e < 0.7) return biomes.SAVANNAH;
-  else if (e < 0.9) return biomes.DESERT;
-  else return biomes.SNOW;
+  if (e < 0.4) return biomes.LIGHT_FOREST;
+  else if (e < 0.7) return biomes.MEDIUM_FOREST;
+  else if (e < 1) return biomes.DENSE_FOREST;
+  else if (e < 1.2) return biomes.JUNGLE;
+  else return biomes.DARK_FOREST;
 };
 
 const apiurl = "https://localhost:7085/api/Noise/generate";
@@ -30,7 +26,7 @@ const NoiseCanvas = () => {
     const postData = {
       width: 100,
       height: 100,
-      noisescale: 3,
+      noisescale: 2.3,
     };
 
     // POST request to fetch noise data
