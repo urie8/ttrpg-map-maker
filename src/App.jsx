@@ -10,7 +10,6 @@ import BSP from "./Pages/BSP";
 function App() {
   return (
     <Router>
-      <Header page={{ title: "Home" }} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/simplex" element={<Simplex />} />
