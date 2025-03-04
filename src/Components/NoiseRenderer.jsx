@@ -1,9 +1,18 @@
 import React, { useEffect, useState, useRef } from "react";
 
-const biomes = {
+const forestBiomes = {
+  LIGHT_FOREST: "#9acd32", // Yellow Green
+  MEDIUM_FOREST: "#6b8e23", // Olive Drab
+  DENSE_FOREST: "#556b2f", // Dark Olive Green
+  JUNGLE: "#228b22", // Forest Green
+  DARK_FOREST: "#013220", // Very Dark Green
+};
+
+const worldMapBiomes = {
   WATER: "#1f78b4",
   BEACH: "#ffe29a",
-  FOREST: "#006400",
+  GRASS: "#8dc63f",
+  MEDIUM_FOREST: "#3a5d0b",
   JUNGLE: "#228b22",
   SAVANNAH: "#c2b280",
   DESERT: "#edc9af",
@@ -11,28 +20,24 @@ const biomes = {
 };
 
 const getBiomeColor = (e) => {
-  if (e < 0.1) return biomes.WATER;
-  else if (e < 0.2) return biomes.BEACH;
-  else if (e < 0.3) return biomes.FOREST;
-  else if (e < 0.5) return biomes.JUNGLE;
-  else if (e < 0.7) return biomes.SAVANNAH;
-  else if (e < 0.9) return biomes.DESERT;
-  else return biomes.SNOW;
+  if (e < 0.4) return forestBiomes.LIGHT_FOREST;
+  else if (e < 0.7) return forestBiomes.MEDIUM_FOREST;
+  else if (e < 1) return forestBiomes.DENSE_FOREST;
+  else if (e < 1.2) return forestBiomes.JUNGLE;
+  else return forestBiomes.DARK_FOREST;
 };
 
 const apiurl = "https://localhost:7085/api/Noise/generate";
 
 const NoiseCanvas = () => {
   const [noiseData, setNoiseData] = useState([]);
+  const [postData, setPostData] = useState({});
   const canvasRef = useRef(null);
 
-  useEffect(() => {
-    const postData = {
-      width: 100,
-      height: 100,
-      noisescale: 3,
-    };
+  function generateData() {}
+  function drawMap(biomes) {}
 
+  useEffect(() => {
     // POST request to fetch noise data
     const fetchData = async () => {
       try {
@@ -81,7 +86,13 @@ const NoiseCanvas = () => {
     }
   }, [noiseData]);
 
-  return <canvas ref={canvasRef} width={500} height={500} />;
+  return (
+    <>
+      <canvas ref={canvasRef} width={500} height={500} />
+      <button>Generate forest</button>
+      <button>Generate worldmap</button>
+    </>
+  );
 };
 
 export default NoiseCanvas;
