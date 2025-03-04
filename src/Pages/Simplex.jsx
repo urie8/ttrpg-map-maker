@@ -1,3 +1,86 @@
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import NoiseRenderTesting from "../Components/NoiseRenderTesting";
+
+const Simplex = () => {
+  const [width, setWidth] = useState(100);
+  const [height, setHeight] = useState(100);
+  const [scale, setScale] = useState(3);
+
+  return (
+    <div className="flex flex-col h-screen bg-gray-900 text-white p-6">
+      {/* Navigeringsknappar */}
+      <div className="flex justify-start space-x-4 mb-6">
+        <Link
+          to="/"
+          className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition"
+        >
+          🏠 Hem
+        </Link>
+        <Link
+          to="/bsp"
+          className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition"
+        >
+          🔲 BSP Karta
+        </Link>
+      </div>
+
+      <h1 className="text-3xl font-bold text-center mb-6 ml-20">
+        Generera Noise Karta
+      </h1>
+
+      {/* Layout: Parameterruta + Canvas */}
+      <div className="flex flex-row items-center justify-center gap-16">
+        {/* Parameterruta - Mindre storlek */}
+        <div className="bg-gray-800 p-4 rounded-lg shadow-lg w-56">
+          <h2 className="text-lg font-semibold mb-2 text-center">Parametrar</h2>
+
+          <div className="grid grid-cols-1 gap-2 mb-3">
+            <div>
+              <label className="block text-xs mb-1">Bredd</label>
+              <input
+                type="number"
+                value={width}
+                onChange={(e) => setWidth(parseInt(e.target.value))}
+                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs mb-1">Höjd</label>
+              <input
+                type="number"
+                value={height}
+                onChange={(e) => setHeight(parseInt(e.target.value))}
+                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs mb-1">Noise Skala</label>
+              <input
+                type="number"
+                value={scale}
+                onChange={(e) => setScale(parseInt(e.target.value))}
+                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Canvas */}
+        <div className="flex flex-col items-center">
+          <NoiseRenderTesting width={width} height={height} scale={scale} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Simplex;
+
+/*
+
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -46,7 +129,7 @@ const Simplex = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-900 text-white p-6">
-      {/* Navigeringsknappar - placerade till vänster */}
+      
       <div className="flex justify-start space-x-4 mb-6">
         <Link
           to="/"
@@ -66,9 +149,8 @@ const Simplex = () => {
         Generera Noise Karta
       </h1>
 
-      {/* Flex-row för att placera parameterruta och canvas sida vid sida */}
       <div className="flex flex-row items-center justify-center gap-16">
-        {/* Parameterruta - Mindre storlek */}
+
         <div className="bg-gray-800 p-4 rounded-lg shadow-lg w-56">
           <h2 className="text-lg font-semibold mb-2 text-center">Parametrar</h2>
 
@@ -111,8 +193,6 @@ const Simplex = () => {
             Generera Karta
           </button>
         </div>
-
-        {/* Canvas-container - Större canvas */}
         <div className="flex flex-col items-center">
           <canvas
             ref={canvasRef}
@@ -127,3 +207,5 @@ const Simplex = () => {
 };
 
 export default Simplex;
+
+*/
