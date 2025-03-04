@@ -1,6 +1,6 @@
 import "./App.css";
 import React from "react";
-import ColourfulCanvas from "./Components/ColorfulCanvas";
+import NoiseRenderer from "./Components/NoiseRenderer";
 import Header from "./Components/Header";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./Pages/Home";
@@ -15,7 +15,7 @@ function App() {
         <Route path="/simplex" element={<Simplex />} />
         <Route path="/bsp" element={<BSP />} />
       </Routes>
-      <ColourfulCanvas />
+      <NoiseRenderer />
     </Router>
   );
 }
