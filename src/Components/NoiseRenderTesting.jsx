@@ -1,23 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
 
 const biomes = {
-  WATER: "#1f78b4",
-  BEACH: "#ffe29a",
-  FOREST: "#006400",
-  JUNGLE: "#228b22",
-  SAVANNAH: "#c2b280",
-  DESERT: "#edc9af",
-  SNOW: "#ffffff",
+  LIGHT_FOREST: "#7cfc00", // Light green for sparse forest
+  DENSE_FOREST: "#006400", // Dark green for deep forest
+  RAINFOREST: "#228b22", // Jungle-like rainforest
+  TAIGA: "#2e8b57", // Cold, northern forest (Taiga)
+  MANGROVE: "#556b2f", // Swampy mangrove forest
 };
 
 const getBiomeColor = (e) => {
-  if (e < 0.1) return biomes.WATER;
-  else if (e < 0.2) return biomes.BEACH;
-  else if (e < 0.3) return biomes.FOREST;
-  else if (e < 0.5) return biomes.JUNGLE;
-  else if (e < 0.7) return biomes.SAVANNAH;
-  else if (e < 0.9) return biomes.DESERT;
-  else return biomes.SNOW;
+  if (e < 0.6) return biomes.MANGROVE; // Lowland swampy areas
+  else if (e < 0.7) return biomes.LIGHT_FOREST; // Sparse trees
+  else if (e < 0.9) return biomes.DENSE_FOREST; // Normal dense forest
+  else if (e < 1.1) return biomes.RAINFOREST; // Tropical forest
+  else return biomes.TAIGA; // Cold, northern forest
 };
 
 const apiurl = "https://localhost:7085/api/Noise/generate";
@@ -66,6 +62,24 @@ const NoiseRenderTesting = ({ width, height, scale }) => {
           ctx.fillRect(x, y, cellWidth, cellHeight);
         });
       });
+
+      ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < canvas.width; i += 50) {
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(canvas.width, i);
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      for (let i = 0; i < canvas.height; i += 50) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, canvas.height);
+        ctx.closePath();
+        ctx.stroke();
+      }
     }
   }, [noiseData, width, height]);
 
