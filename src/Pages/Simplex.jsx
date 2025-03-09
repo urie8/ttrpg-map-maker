@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import NoiseRenderTesting from "../Components/NoiseRenderTesting";
+import FullMapRenderer from "../Components/FullMapRenderer";
 
 const Simplex = () => {
   const [width, setWidth] = useState(100);
@@ -71,6 +72,7 @@ const Simplex = () => {
         {/* Canvas */}
         <div className="flex flex-col items-center">
           <NoiseRenderTesting width={width} height={height} scale={scale} />
+          {/* <FullMapRenderer width={width} height={height} scale={scale} /> */}
         </div>
       </div>
     </div>
