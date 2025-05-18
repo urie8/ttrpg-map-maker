@@ -71,8 +71,8 @@ const Simplex = () => {
 
         {/* Canvas */}
         <div className="flex flex-col items-center">
-          <NoiseRenderTesting width={width} height={height} scale={scale} />
-          {/* <FullMapRenderer width={width} height={height} scale={scale} /> */}
+          {/* <NoiseRenderTesting width={width} height={height} scale={scale} /> */}
+          <FullMapRenderer width={width} height={height} scale={scale} />
         </div>
       </div>
     </div>

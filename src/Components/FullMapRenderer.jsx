@@ -56,25 +56,51 @@ const FullMapRenderer = ({ width, height, scale }) => {
   }, [width, height, scale]);
 
   function drawRooms(rooms) {
+    if (!rooms || rooms.length === 0) return;
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    // ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas before drawing new rooms
 
-    console.log("Drawing rooms:", rooms); // Log rooms to check data
+    const gridSize = 50;
+
+    const minX = Math.min(...rooms.map((r) => r.x));
+    const minY = Math.min(...rooms.map((r) => r.y));
+    const maxX = Math.max(...rooms.map((r) => r.x + r.width));
+    const maxY = Math.max(...rooms.map((r) => r.y + r.height));
+
+    const buildingWidth = maxX - minX;
+    const buildingHeight = maxY - minY;
+
+    const buildingWidthInCells = Math.ceil(buildingWidth / gridSize);
+    const buildingHeightInCells = Math.ceil(buildingHeight / gridSize);
+
+    const maxCols = Math.floor(canvas.width / gridSize);
+    const maxRows = Math.floor(canvas.height / gridSize);
+
+    const maxOffsetCol = maxCols - buildingWidthInCells;
+    const maxOffsetRow = maxRows - buildingHeightInCells;
+
+    const offsetCol = Math.floor(Math.random() * maxOffsetCol);
+    const offsetRow = Math.floor(Math.random() * maxOffsetRow);
+
+    const offsetX = offsetCol * gridSize;
+    const offsetY = offsetRow * gridSize;
 
     rooms.forEach((room) => {
-      console.log(
-        `Drawing room at X: ${room.x}, Y: ${room.y}, Width: ${room.width}, Height: ${room.height}`
-      ); // Log each room's details
+      const localX = room.x - minX;
+      const localY = room.y - minY;
 
-      // Draw the floor of the room (light blue)
+      const alignedX = offsetX + Math.round(localX / gridSize) * gridSize;
+      const alignedY = offsetY + Math.round(localY / gridSize) * gridSize;
+      const alignedWidth = Math.round(room.width / gridSize) * gridSize;
+      const alignedHeight = Math.round(room.height / gridSize) * gridSize;
+
       ctx.fillStyle = "lightblue";
-      ctx.fillRect(room.x, room.y, room.width, room.height);
+      ctx.fillRect(alignedX, alignedY, alignedWidth, alignedHeight);
 
-      // Draw the walls of the room (darker color)
-      ctx.strokeStyle = "darkblue"; // Color of the walls
-      ctx.lineWidth = 2; // Set the thickness of the walls
-      ctx.strokeRect(room.x, room.y, room.width, room.height); // Draw the walls as a border around the room
+      ctx.strokeStyle = "darkblue";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(alignedX, alignedY, alignedWidth, alignedHeight);
     });
   }
 
@@ -86,8 +112,9 @@ const FullMapRenderer = ({ width, height, scale }) => {
     else return biomes.TAIGA; // Cold, northern forest
   };
 
+  // Your current useEffect
   useEffect(() => {
-    if (noiseData.length > 0) {
+    if (noiseData.length > 0 && bspData.length > 0) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
       canvas.width = width * 5;
@@ -96,6 +123,7 @@ const FullMapRenderer = ({ width, height, scale }) => {
       const cellWidth = canvas.width / width;
       const cellHeight = canvas.height / height;
 
+      // ✅ Draw noise map first
       noiseData.forEach((row, rowIndex) => {
         row.forEach((value, colIndex) => {
           const x = colIndex * cellWidth;
@@ -105,16 +133,15 @@ const FullMapRenderer = ({ width, height, scale }) => {
         });
       });
 
+      // ✅ Then draw rooms on top
       drawRooms(bspData);
 
-      ctx.strokeRect(0, 0, canvas.width, canvas.height);
+      // ✅ Then draw grid lines
       ctx.strokeStyle = "rgb(0 0 0 / 40%)";
-
       for (let i = 0; i < canvas.width; i += 50) {
         ctx.beginPath();
         ctx.moveTo(0, i);
         ctx.lineTo(canvas.width, i);
-        ctx.closePath();
         ctx.stroke();
       }
 
@@ -122,11 +149,10 @@ const FullMapRenderer = ({ width, height, scale }) => {
         ctx.beginPath();
         ctx.moveTo(i, 0);
         ctx.lineTo(i, canvas.height);
-        ctx.closePath();
         ctx.stroke();
       }
     }
-  }, [noiseData, width, height]);
+  }, [noiseData, bspData, width, height]);
 
   return (
     <div>
