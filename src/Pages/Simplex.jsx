@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import NoiseRenderTesting from "../Components/NoiseRenderTesting";
+import FullMapRenderer from "../Components/FullMapRenderer";
 
 const Simplex = () => {
   const [width, setWidth] = useState(100);
   const [height, setHeight] = useState(100);
-  const [scale, setScale] = useState(3);
+  const [scale, setScale] = useState(2.5);
 
   return (
     <div className="flex flex-col h-screen bg-gray-900 text-white p-6">
@@ -70,7 +71,8 @@ const Simplex = () => {
 
         {/* Canvas */}
         <div className="flex flex-col items-center">
-          <NoiseRenderTesting width={width} height={height} scale={scale} />
+          {/* <NoiseRenderTesting width={width} height={height} scale={scale} /> */}
+          <FullMapRenderer width={width} height={height} scale={scale} />
         </div>
       </div>
     </div>

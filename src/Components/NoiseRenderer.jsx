@@ -1,24 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 
-const forestBiomes = {
-  LIGHT_FOREST: "#9acd32", // Yellow Green
-  MEDIUM_FOREST: "#6b8e23", // Olive Drab
-  DENSE_FOREST: "#556b2f", // Dark Olive Green
-  JUNGLE: "#228b22", // Forest Green
-  DARK_FOREST: "#013220", // Very Dark Green
-};
-
-const worldMapBiomes = {
-  WATER: "#1f78b4",
-  BEACH: "#ffe29a",
-  GRASS: "#8dc63f",
-  MEDIUM_FOREST: "#3a5d0b",
-  JUNGLE: "#228b22",
-  SAVANNAH: "#c2b280",
-  DESERT: "#edc9af",
-  SNOW: "#ffffff",
-};
-
 const getBiomeColor = (e) => {
   if (e < 0.4) return forestBiomes.LIGHT_FOREST;
   else if (e < 0.7) return forestBiomes.MEDIUM_FOREST;

@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-
-const apiurl = "https://localhost:7085/api/BSP/generateBSP";
+import { bspApi } from "../constants/api";
 
 const BSPRenderer = () => {
   const [bspData, setbspData] = useState([]);
@@ -41,7 +40,7 @@ const BSPRenderer = () => {
     // POST request to fetch bsp data
     const fetchData = async () => {
       try {
-        const response = await fetch(apiurl, {
+        const response = await fetch(bspApi, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
