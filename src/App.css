@@ -41,3 +41,130 @@
 .read-the-docs {
   color: #888;
 }
+
+/* 
+  BSP 
+*/
+
+#tile-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+    /* 👈 this is the fix */
+}
+
+#tile-actions {
+  position: absolute;
+  display: none;
+  gap: 4px;
+  z-index: 999;
+}
+
+#tile-actions button {
+  padding: 4px 8px;
+  font-size: 14px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #aaa;
+  border-radius: 3px;
+}
+
+.tile {
+  width: 64px;
+  height: 64px;
+  background-size: cover;
+  pointer-events: auto;
+  cursor: pointer;
+  transform-origin: center center;
+}
+
+.tile.selected {
+  outline: 3px solid yellow;
+  z-index: 20;
+}
+
+/* Floors */
+.tile.floor_wood {
+  background-image: url("Components/Tiles/floor_wood.png");
+  z-index: 1;
+}
+
+.tile.floor_tiles {
+  background-image: url("Components/tiles/floor_tiles.png");
+  z-index: 1;
+}
+
+.tile.stairs {
+  background-image: url("Components/tiles/stairs_down_detail.png");
+  z-index: 1;
+}
+
+/* Walls */
+.tile.wall {
+  background-image: url("Components/tiles/wall.png");
+  z-index: 3;
+}
+
+.tile.wall_half {
+  background-image: url("Components/tiles/wall_half.png");
+  z-index: 3;
+}
+
+.tile.wall_diagonal {
+  background-image: url("Components/tiles/wall_diagonal.png");
+  z-index: 3;
+}
+
+.tile.wall_inner_diagonal {
+  background-image: url("Components/tiles/inner_diagonal.png");
+  z-index: 3;
+}
+
+.tile.wall_corner {
+  background-image: url("Components/tiles/wall_corner.png");
+  z-index: 3;
+}
+
+.tile.door {
+  background-image: url("Components/tiles/door.png");
+  z-index: 3;
+}
+
+/* Decorations */
+.tile.barrels_stacked {
+  background-image: url("Components/Decorations/barrels_stacked.png");
+  z-index: 2;
+}
+
+.tile.bed {
+  background-image: url("Components/Decorations/bed.png");
+  z-index: 2;
+}
+
+.tile.table {
+  background-image: url("Components/Decorations/table.png");
+  z-index: 2;
+}
+
+.tile-palette {
+  position: fixed;
+  /* Use fixed to make sure it stays at the bottom of the screen */
+  bottom: 10px;
+  /* 10px from the bottom of the screen */
+  left: 50%;
+  /* Center horizontally */
+  transform: translateX(-50%);
+  /* Offset the element by half its width to truly center it */
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 5px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
