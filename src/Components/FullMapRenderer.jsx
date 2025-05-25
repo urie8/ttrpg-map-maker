@@ -70,43 +70,59 @@ const FullMapRenderer = ({ width, height, scale }) => {
     if (noiseData.length > 0 && bspData.length > 0) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
+      ctx.imageSmoothingEnabled = false;
+
       const overlay = overlayRef.current;
-      overlay.style.width = `${canvas.width}px`;
-      overlay.style.height = `${canvas.height}px`;
+
+      const canvasWidth = 1280;
+      const canvasHeight = 768;
+
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+
+      overlay.style.width = `${canvasWidth}px`;
+      overlay.style.height = `${canvasHeight}px`;
       overlay.style.left = `${canvas.offsetLeft}px`;
       overlay.style.top = `${canvas.offsetTop}px`;
       overlay.style.pointerEvents = "auto";
       overlay.style.position = "absolute";
-      canvas.width = width * 5;
-      canvas.height = height * 5;
-      const cellWidth = canvas.width / width;
-      const cellHeight = canvas.height / height;
 
-      noiseData.forEach((row, rowIndex) => {
-        row.forEach((value, colIndex) => {
-          const x = colIndex * cellWidth;
-          const y = rowIndex * cellHeight;
+      const noiseCols = noiseData[0].length;
+      const noiseRows = noiseData.length;
+
+      const cellWidth = canvasWidth / noiseCols;
+      const cellHeight = canvasHeight / noiseRows;
+
+      for (let y = 0; y < noiseRows; y++) {
+        for (let x = 0; x < noiseCols; x++) {
+          const value = noiseData[y][x];
           ctx.fillStyle = getBiomeColor(value);
-          ctx.fillRect(x, y, cellWidth, cellHeight);
-        });
-      });
+          ctx.fillRect(
+            Math.floor(x * cellWidth),
+            Math.floor(y * cellHeight),
+            Math.ceil(cellWidth),
+            Math.ceil(cellHeight)
+          );
+        }
+      }
 
+      // ➕ Overlay grid at 64px intervals (not tied to noise)
       ctx.strokeStyle = "rgb(0 0 0 / 40%)";
-      for (let i = 0; i < canvas.width; i += 64) {
+      for (let i = 0; i <= canvasWidth; i += 64) {
         ctx.beginPath();
-        ctx.moveTo(0, i);
-        ctx.lineTo(canvas.width, i);
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, canvasHeight);
         ctx.stroke();
       }
 
-      for (let i = 0; i < canvas.height; i += 64) {
+      for (let i = 0; i <= canvasHeight; i += 64) {
         ctx.beginPath();
-        ctx.moveTo(i, 0);
-        ctx.lineTo(i, canvas.height);
+        ctx.moveTo(0, i);
+        ctx.lineTo(canvasWidth, i);
         ctx.stroke();
       }
     }
-  }, [noiseData, bspData, width, height]);
+  }, [noiseData, bspData]);
 
   // 🧱 Room data renderer
   useEffect(() => {
