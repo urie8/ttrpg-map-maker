@@ -6,7 +6,7 @@ const tileSize = 64;
 
 const FullMapRenderer = ({
   bspPositionX,
-  bspPositonY,
+  bspPositionY,
   bspWidth,
   bspHeight,
   width,
@@ -307,6 +307,9 @@ const FullMapRenderer = ({
   const getBSP = async () => {
     setLoading(true);
     try {
+      console.log(
+        "bspPositionX: " + bspPositionX + ", bspPositionY: " + bspPositionY
+      );
       // Make the POST request to the backend API
       const response = await fetch(
         "http://localhost:5102/api/bsp/generateBSP",
@@ -317,7 +320,7 @@ const FullMapRenderer = ({
           },
           body: JSON.stringify({
             X: bspPositionX, // Include the postData or anything you want to send
-            Y: bspPositonY,
+            Y: bspPositionY,
             Width: bspWidth,
             Height: bspHeight,
             MinRoomWidth: 192,
