@@ -20,7 +20,7 @@ function Home() {
           to="/simplex"
           className="px-4 py-2 bg-green-500 rounded-lg hover:bg-green-600 transition"
         >
-          Skapa Noise Karta
+          Skapa karta!
         </Link>
       </div>
     </div>

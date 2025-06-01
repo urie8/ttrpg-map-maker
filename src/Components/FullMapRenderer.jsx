@@ -546,58 +546,72 @@ const FullMapRenderer = ({
   };
 
   return (
-    <div className="flex flex-col items-center">
-      {loading && <p className="text-gray-400 mb-2">Laddar karta...</p>}
-      <canvas ref={canvasRef} className="border border-gray-600" />
+    <div className="flex flex-col items-center w-full overflow-x-hidden">
+      {/* Top section: Controls and tile palette */}
+      <div className="flex flex-col items-center w-full max-w-[1280px] px-4">
+        {loading && <p className="text-gray-400 mb-2">Laddar karta...</p>}
 
-      <div
-        id="tile-overlay"
-        ref={overlayRef}
-        style={{ position: "absolute", pointerEvents: "auto" }}
-      />
+        <div className="tile-palette mt-4 flex gap-2 flex-wrap justify-center">
+          {[
+            "floor_wood",
+            "floor_tiles",
+            "stairs",
+            "wall",
+            "wall_half",
+            "wall_diagonal",
+            "wall_inner_diagonal",
+            "wall_corner",
+            "door",
+            "barrels_stacked",
+            "bed",
+            "table",
+            "wall_semi_thick",
+          ].map((type) => (
+            <div
+              key={type}
+              className={`tile ${type}`}
+              draggable
+              data-type={type}
+            ></div>
+          ))}
+        </div>
 
+        <div className="flex gap-4 mt-4 mb-6">
+          <button
+            onClick={downloadCanvas}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Ladda ner karta
+          </button>
+          <button
+            onClick={getBSP}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Kör BSP
+          </button>
+        </div>
+      </div>
+
+      {/* Canvas and overlay section */}
+      <div className="relative" style={{ width: "1280px", height: "768px" }}>
+        <canvas
+          ref={canvasRef}
+          className="border border-gray-600 block"
+          width={1280}
+          height={768}
+        />
+        <div
+          id="tile-overlay"
+          ref={overlayRef}
+          className="absolute top-0 left-0 w-full h-full pointer-events-auto"
+        />
+      </div>
+
+      {/* Tile actions floating menu */}
       <div id="tile-actions" ref={tileActionsRef} className="absolute hidden">
         <button id="rotate-btn">⟳</button>
         <button id="delete-btn">✖</button>
       </div>
-
-      <div className="tile-palette mt-4 flex gap-2 flex-wrap">
-        {[
-          "floor_wood",
-          "floor_tiles",
-          "stairs",
-          "wall",
-          "wall_half",
-          "wall_diagonal",
-          "wall_inner_diagonal",
-          "wall_corner",
-          "door",
-          "barrels_stacked",
-          "bed",
-          "table",
-          "wall_semi_thick",
-        ].map((type) => (
-          <div
-            key={type}
-            className={`tile ${type}`}
-            draggable
-            data-type={type}
-          ></div>
-        ))}
-      </div>
-
-      <button
-        onClick={downloadCanvas}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        Ladda ner karta
-      </button>
-      <button
-        onClick={getBSP}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        Kör BSP
-      </button>
     </div>
   );
 };

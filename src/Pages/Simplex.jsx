@@ -10,138 +10,100 @@ const Simplex = () => {
   const [bspWidth, setBSPWidth] = useState(MULTIPLIER * 6);
   const [bspHeight, setBSPHeight] = useState(MULTIPLIER * 6);
 
-  const [width, setWidth] = useState(100);
-  const [height, setHeight] = useState(100);
+  const [width, setWidth] = useState(300);
+  const [height, setHeight] = useState(300);
   const [scale, setScale] = useState(2.5);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-900 text-white p-6">
-      {/* Navigeringsknappar */}
-      <div className="flex justify-start space-x-4 mb-6">
-        <Link
-          to="/"
-          className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition"
-        >
-          🏠 Hem
-        </Link>
-        <Link
-          to="/bsp"
-          className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition"
-        >
-          🔲 BSP Karta
-        </Link>
+    <div className="flex flex-col min-h-screen bg-gray-900 text-white overflow-hidden">
+      {/* Top Toolbar */}
+      <div className="flex items-center justify-center gap-6 px-4 py-3 bg-gray-900 w-full">
+        {/* BSP */}
+        <div className="flex gap-2 items-center">
+          <h3>BSP:</h3>
+          <div className="flex flex-col text-xs">
+            <label>Pos X</label>
+            <input
+              type="number"
+              value={bspPositionX / MULTIPLIER}
+              onChange={(e) =>
+                setBSPPositionX(parseInt(e.target.value) * MULTIPLIER)
+              }
+              className="w-14 p-1 bg-gray-800 border border-gray-600 rounded text-sm"
+            />
+          </div>
+          <div className="flex flex-col text-xs">
+            <label>Pos Y</label>
+            <input
+              type="number"
+              value={bspPositionY / MULTIPLIER}
+              onChange={(e) =>
+                setBSPPositionY(parseInt(e.target.value) * MULTIPLIER)
+              }
+              className="w-14 p-1 bg-gray-800 border border-gray-600 rounded text-sm"
+            />
+          </div>
+          <div className="flex flex-col text-xs">
+            <label>Width</label>
+            <input
+              type="number"
+              value={bspWidth / MULTIPLIER}
+              onChange={(e) =>
+                setBSPWidth(parseInt(e.target.value) * MULTIPLIER)
+              }
+              className="w-14 p-1 bg-gray-800 border border-gray-600 rounded text-sm"
+            />
+          </div>
+          <div className="flex flex-col text-xs">
+            <label>Height</label>
+            <input
+              type="number"
+              value={bspHeight / MULTIPLIER}
+              onChange={(e) =>
+                setBSPHeight(parseInt(e.target.value) * MULTIPLIER)
+              }
+              className="w-14 p-1 bg-gray-800 border border-gray-600 rounded text-sm"
+            />
+          </div>
+        </div>
+
+        {/* Parameters */}
+        <div className="flex gap-2 items-center">
+          <h3>Noise:</h3>
+          <div className="flex flex-col text-xs">
+            <label>Bredd</label>
+            <input
+              type="number"
+              value={width}
+              onChange={(e) => setWidth(parseInt(e.target.value))}
+              className="w-14 p-1 bg-gray-800 border border-gray-600 rounded text-sm"
+            />
+          </div>
+          <div className="flex flex-col text-xs">
+            <label>Höjd</label>
+            <input
+              type="number"
+              value={height}
+              onChange={(e) => setHeight(parseInt(e.target.value))}
+              className="w-14 p-1 bg-gray-800 border border-gray-600 rounded text-sm"
+            />
+          </div>
+          <div className="flex flex-col text-xs">
+            <label>Noise</label>
+            <input
+              type="number"
+              step="0.1"
+              value={scale}
+              onChange={(e) => setScale(parseFloat(e.target.value))}
+              className="w-14 p-1 bg-gray-800 border border-gray-600 rounded text-sm"
+            />
+          </div>
+        </div>
       </div>
 
-      <h1 className="text-3xl font-bold text-center mb-6 ml-20">
-        Generera Noise Karta
-      </h1>
-
-      {/* Layout: Parameterruta + Canvas */}
-      <div className="flex flex-row items-center justify-center gap-16">
-        ¨{/* Parameterruta - BSP */}
-        <div className="bg-gray-800 p-4 rounded-lg shadow-lg w-56">
-          <h2 className="text-lg font-semibold mb-2 text-center">BSP</h2>
-
-          {/* X: 64, // Include the postData or anything you want to send Y: 64,
-          Width: 448, Height: 448, MinRoomWidth: 192, MinRoomHeight: 192, }), */}
-
-          <div className="grid grid-cols-1 gap-2 mb-3">
-            <div>
-              <label className="block text-xs mb-1">Position X</label>
-              <input
-                type="number"
-                min={1}
-                step={1}
-                value={bspPositionX / MULTIPLIER}
-                onChange={(e) =>
-                  setBSPPositionX(parseInt(e.target.value) * MULTIPLIER)
-                }
-                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs mb-1">Position Y</label>
-              <input
-                type="number"
-                min={1}
-                step={1}
-                value={bspPositionY / MULTIPLIER}
-                onChange={(e) =>
-                  setBSPPositionY(parseInt(e.target.value) * MULTIPLIER)
-                }
-                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs mb-1">Room Width</label>
-              <input
-                type="number"
-                min={6}
-                step={1}
-                value={bspWidth / MULTIPLIER}
-                onChange={(e) =>
-                  setBSPWidth(parseInt(e.target.value) * MULTIPLIER)
-                }
-                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs mb-1">Room Height</label>
-              <input
-                type="number"
-                min={6}
-                step={1}
-                value={bspHeight / MULTIPLIER}
-                onChange={(e) =>
-                  setBSPHeight(parseInt(e.target.value) * MULTIPLIER)
-                }
-                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
-              />
-            </div>
-          </div>
-        </div>
-        {/* Parameterruta - Mindre storlek */}
-        <div className="bg-gray-800 p-4 rounded-lg shadow-lg w-56">
-          <h2 className="text-lg font-semibold mb-2 text-center">Parametrar</h2>
-
-          <div className="grid grid-cols-1 gap-2 mb-3">
-            <div>
-              <label className="block text-xs mb-1">Bredd</label>
-              <input
-                type="number"
-                value={width}
-                onChange={(e) => setWidth(parseInt(e.target.value))}
-                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs mb-1">Höjd</label>
-              <input
-                type="number"
-                value={height}
-                onChange={(e) => setHeight(parseInt(e.target.value))}
-                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs mb-1">Noise Skala</label>
-              <input
-                type="number"
-                value={scale}
-                onChange={(e) => setScale(parseInt(e.target.value))}
-                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
-              />
-            </div>
-          </div>
-        </div>
-        {/* Canvas */}
-        <div className="flex flex-col items-center">
-          {/* <NoiseRenderTesting width={width} height={height} scale={scale} /> */}
+      {/* Map Renderer Fullscreen */}
+      <div className="flex-grow flex justify-center items-center overflow-hidden">
+        <div className="relative">
           <FullMapRenderer
             bspPositionX={bspPositionX}
             bspPositionY={bspPositionY}
@@ -153,139 +115,9 @@ const Simplex = () => {
           />
         </div>
       </div>
+      <br />
     </div>
   );
 };
 
 export default Simplex;
-
-/*
-
-import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
-
-const apiurl = "https://localhost:7085/api/Noise/generate";
-
-const Simplex = () => {
-  const [width, setWidth] = useState(100);
-  const [height, setHeight] = useState(100);
-  const [scale, setScale] = useState(3);
-  const [noiseData, setNoiseData] = useState([]);
-  const canvasRef = useRef(null);
-
-  const fetchNoise = async () => {
-    const postData = { width, height, noisescale: scale };
-    try {
-      const response = await fetch(apiurl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(postData),
-      });
-      const data = await response.json();
-      setNoiseData(data);
-    } catch (error) {
-      console.error("Error fetching noise data:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (noiseData.length > 0) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
-
-      const cellWidth = canvas.width / width;
-      const cellHeight = canvas.height / height;
-
-      noiseData.forEach((row, rowIndex) => {
-        row.forEach((value, colIndex) => {
-          const x = colIndex * cellWidth;
-          const y = rowIndex * cellHeight;
-          ctx.fillStyle = `rgb(${value * 255}, ${value * 255}, ${value * 255})`;
-          ctx.fillRect(x, y, cellWidth, cellHeight);
-        });
-      });
-    }
-  }, [noiseData]);
-
-  return (
-    <div className="flex flex-col h-screen bg-gray-900 text-white p-6">
-      
-      <div className="flex justify-start space-x-4 mb-6">
-        <Link
-          to="/"
-          className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition"
-        >
-          🏠 Hem
-        </Link>
-        <Link
-          to="/bsp"
-          className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition"
-        >
-          🔲 BSP Karta
-        </Link>
-      </div>
-
-      <h1 className="text-3xl font-bold text-center mb-6 ml-20">
-        Generera Noise Karta
-      </h1>
-
-      <div className="flex flex-row items-center justify-center gap-16">
-
-        <div className="bg-gray-800 p-4 rounded-lg shadow-lg w-56">
-          <h2 className="text-lg font-semibold mb-2 text-center">Parametrar</h2>
-
-          <div className="grid grid-cols-1 gap-2 mb-3">
-            <div>
-              <label className="block text-xs mb-1">Bredd</label>
-              <input
-                type="number"
-                value={width}
-                onChange={(e) => setWidth(e.target.value)}
-                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs mb-1">Höjd</label>
-              <input
-                type="number"
-                value={height}
-                onChange={(e) => setHeight(e.target.value)}
-                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs mb-1">Noise Skala</label>
-              <input
-                type="number"
-                value={scale}
-                onChange={(e) => setScale(e.target.value)}
-                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
-              />
-            </div>
-          </div>
-
-          <button
-            onClick={fetchNoise}
-            className="w-full px-4 py-1.5 bg-blue-500 rounded-lg hover:bg-blue-600 transition text-sm"
-          >
-            Generera Karta
-          </button>
-        </div>
-        <div className="flex flex-col items-center">
-          <canvas
-            ref={canvasRef}
-            width={500}
-            height={500}
-            className="border border-gray-600"
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default Simplex;
-
-*/
