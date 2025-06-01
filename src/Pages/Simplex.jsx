@@ -15,7 +15,7 @@ const Simplex = () => {
   const [scale, setScale] = useState(2.5);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900 text-white p-6">
+    <div className="flex flex-col min-h-screen bg-gray-900 text-white p-6">
       {/* Navigeringsknappar */}
       <div className="flex justify-start space-x-4 mb-6">
         <Link
