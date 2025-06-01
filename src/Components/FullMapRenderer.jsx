@@ -4,7 +4,15 @@ import { biomes } from "../constants/biomes";
 
 const tileSize = 64;
 
-const FullMapRenderer = ({ width, height, scale }) => {
+const FullMapRenderer = ({
+  bspPositionX,
+  bspPositonY,
+  bspWidth,
+  bspHeight,
+  width,
+  height,
+  scale,
+}) => {
   const [noiseData, setNoiseData] = useState([]);
   const [bspData, setbspData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -308,10 +316,10 @@ const FullMapRenderer = ({ width, height, scale }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            X: 64, // Include the postData or anything you want to send
-            Y: 64,
-            Width: 448,
-            Height: 448,
+            X: bspPositionX, // Include the postData or anything you want to send
+            Y: bspPositonY,
+            Width: bspWidth,
+            Height: bspHeight,
             MinRoomWidth: 192,
             MinRoomHeight: 192,
           }),

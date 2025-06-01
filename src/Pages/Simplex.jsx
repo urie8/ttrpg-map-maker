@@ -4,6 +4,12 @@ import NoiseRenderTesting from "../Components/NoiseRenderTesting";
 import FullMapRenderer from "../Components/FullMapRenderer";
 
 const Simplex = () => {
+  const MULTIPLIER = 64;
+  const [bspPositionX, setBSPPositionX] = useState(MULTIPLIER);
+  const [bspPositionY, setBSPPositionY] = useState(MULTIPLIER);
+  const [bspWidth, setBSPWidth] = useState(MULTIPLIER * 6);
+  const [bspHeight, setBSPHeight] = useState(MULTIPLIER * 6);
+
   const [width, setWidth] = useState(100);
   const [height, setHeight] = useState(100);
   const [scale, setScale] = useState(2.5);
@@ -32,6 +38,71 @@ const Simplex = () => {
 
       {/* Layout: Parameterruta + Canvas */}
       <div className="flex flex-row items-center justify-center gap-16">
+        ¨{/* Parameterruta - BSP */}
+        <div className="bg-gray-800 p-4 rounded-lg shadow-lg w-56">
+          <h2 className="text-lg font-semibold mb-2 text-center">BSP</h2>
+
+          {/* X: 64, // Include the postData or anything you want to send Y: 64,
+          Width: 448, Height: 448, MinRoomWidth: 192, MinRoomHeight: 192, }), */}
+
+          <div className="grid grid-cols-1 gap-2 mb-3">
+            <div>
+              <label className="block text-xs mb-1">Position X</label>
+              <input
+                type="number"
+                min={1}
+                step={1}
+                value={bspPositionX / MULTIPLIER}
+                onChange={(e) =>
+                  setBSPPositionX(parseInt(e.target.value) * MULTIPLIER)
+                }
+                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs mb-1">Position Y</label>
+              <input
+                type="number"
+                min={1}
+                step={1}
+                value={bspPositionY / MULTIPLIER}
+                onChange={(e) =>
+                  setBSPPositionY(parseInt(e.target.value) * MULTIPLIER)
+                }
+                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs mb-1">Room Width</label>
+              <input
+                type="number"
+                min={6}
+                step={1}
+                value={bspWidth / MULTIPLIER}
+                onChange={(e) =>
+                  setBSPWidth(parseInt(e.target.value) * MULTIPLIER)
+                }
+                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs mb-1">Room Height</label>
+              <input
+                type="number"
+                min={6}
+                step={1}
+                value={bspHeight / MULTIPLIER}
+                onChange={(e) =>
+                  setBSPHeight(parseInt(e.target.value) * MULTIPLIER)
+                }
+                className="w-full p-1 bg-gray-700 text-white border border-gray-500 rounded-md text-sm"
+              />
+            </div>
+          </div>
+        </div>
         {/* Parameterruta - Mindre storlek */}
         <div className="bg-gray-800 p-4 rounded-lg shadow-lg w-56">
           <h2 className="text-lg font-semibold mb-2 text-center">Parametrar</h2>
@@ -68,11 +139,18 @@ const Simplex = () => {
             </div>
           </div>
         </div>
-
         {/* Canvas */}
         <div className="flex flex-col items-center">
           {/* <NoiseRenderTesting width={width} height={height} scale={scale} /> */}
-          <FullMapRenderer width={width} height={height} scale={scale} />
+          <FullMapRenderer
+            bspPositionX={bspPositionX}
+            bspPositionY={bspPositionY}
+            bspWidth={bspWidth}
+            bspHeight={bspHeight}
+            width={width}
+            height={height}
+            scale={scale}
+          />
         </div>
       </div>
     </div>
