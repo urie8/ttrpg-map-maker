@@ -6,7 +6,7 @@ const tileSize = 64;
 
 const FullMapRenderer = ({
   bspPositionX,
-  bspPositonY,
+  bspPositionY,
   bspWidth,
   bspHeight,
   width,
@@ -307,6 +307,9 @@ const FullMapRenderer = ({
   const getBSP = async () => {
     setLoading(true);
     try {
+      console.log(
+        "bspPositionX: " + bspPositionX + ", bspPositionY: " + bspPositionY
+      );
       // Make the POST request to the backend API
       const response = await fetch(
         "http://localhost:5102/api/bsp/generateBSP",
@@ -317,7 +320,7 @@ const FullMapRenderer = ({
           },
           body: JSON.stringify({
             X: bspPositionX, // Include the postData or anything you want to send
-            Y: bspPositonY,
+            Y: bspPositionY,
             Width: bspWidth,
             Height: bspHeight,
             MinRoomWidth: 192,
@@ -339,89 +342,19 @@ const FullMapRenderer = ({
     }
   };
 
-  function isWallAtPosition(x, y) {
-    const walls = document.querySelectorAll(".wall, .wall_corner");
-    for (const wall of walls) {
-      const wallX = parseInt(wall.style.left, 10);
-      const wallY = parseInt(wall.style.top, 10);
-      if (wallX === x && wallY === y) {
-        return wall; // return the DOM element (not just true/false)
+  const isTileAtPosition = (x, y, className, rotation = "rotate(0deg)") => {
+    const tiles = overlayRef.current.querySelectorAll(`.tile.${className}`);
+    for (const tile of tiles) {
+      const left = parseInt(tile.style.left, 10);
+      const top = parseInt(tile.style.top, 10);
+      const transform = tile.style.transform || "rotate(0deg)";
+
+      if (left === x && top === y && transform === rotation) {
+        return true; // Same class, same position, same rotation
       }
     }
-    return undefined;
-  }
-
-  function isHorizontalWall(wall) {
-    const t = wall.style.transform;
-    return t === "" || t.includes("0deg") || t.includes("180deg");
-  }
-
-  function isVerticalWall(wall) {
-    const t = wall.style.transform;
-    return t.includes("90deg") || t.includes("270deg");
-  }
-
-  function isCorner(x, y) {
-    const top = isWallAtPosition(x, y - tileSize);
-    const bottom = isWallAtPosition(x, y + tileSize);
-    const left = isWallAtPosition(x - tileSize, y);
-    const right = isWallAtPosition(x + tileSize, y);
-
-    const hasVertical =
-      (top && isVerticalWall(top)) || (bottom && isVerticalWall(bottom));
-    const hasHorizontal =
-      (left && isHorizontalWall(left)) || (right && isHorizontalWall(right));
-
-    return hasVertical && hasHorizontal;
-  }
-
-  function isGuidelineViolated(x, y, orientation) {
-    const checkPositions =
-      orientation === "horizontal"
-        ? [
-            { dx: 0, dy: -tileSize }, // check above
-            { dx: 0, dy: tileSize }, // check below
-          ]
-        : [
-            { dx: -tileSize, dy: 0 }, // check left
-            { dx: tileSize, dy: 0 }, // check right
-          ];
-
-    // Check neighboring tiles
-    for (const offset of checkPositions) {
-      const neighborX = x + offset.dx;
-      const neighborY = y + offset.dy;
-      const neighbor = isWallAtPosition(neighborX, neighborY);
-
-      if (neighbor) {
-        const transform = neighbor.style.transform;
-
-        const isNeighborHorizontal =
-          transform.includes("0deg") ||
-          transform.includes("180deg") ||
-          transform === ""; // Default is 0 degrees (horizontal)
-
-        const isNeighborVertical =
-          transform.includes("90deg") || transform.includes("270deg");
-
-        const sameOrientation =
-          (orientation === "horizontal" && isNeighborHorizontal) ||
-          (orientation === "vertical" && isNeighborVertical);
-
-        if (sameOrientation) {
-          // Violation: same orientation wall adjacent (horizontal with horizontal or vertical with vertical)
-          // Use a semi-thick wall instead of a regular wall
-          return "semi-thick"; // Indicate to use semi-thick wall
-        } else {
-          // No violation, allow if the orientations are different (i.e., T-junction or corner)
-          return false; // No violation, continue with regular wall placement
-        }
-      }
-    }
-
-    // If no neighbor is found, there’s no violation, so it's safe to place
-    return false; // No violation, safe to place a regular wall
-  }
+    return false;
+  };
 
   const renderRooms = (rooms) => {
     const overlay = overlayRef.current;
@@ -443,95 +376,66 @@ const FullMapRenderer = ({
       // --- 1. Render Floor Tiles ---
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
-          const tile = document.createElement("div");
-          tile.classList.add("tile", "floor_wood");
-          tile.style.position = "absolute";
-          tile.style.width = tileSize + "px";
-          tile.style.height = tileSize + "px";
-          tile.style.left = room.left + x * tileSize + "px";
-          tile.style.top = room.top + y * tileSize + "px";
-          overlay.appendChild(tile);
+          const tileX = room.left + x * tileSize;
+          const tileY = room.top + y * tileSize;
+
+          if (!isTileAtPosition(tileX, tileY, "floor_wood")) {
+            const tile = document.createElement("div");
+            tile.classList.add("tile", "floor_wood");
+            tile.style.position = "absolute";
+            tile.style.width = tileSize + "px";
+            tile.style.height = tileSize + "px";
+            tile.style.left = tileX + "px";
+            tile.style.top = tileY + "px";
+            overlay.appendChild(tile);
+          }
         }
       }
 
-      // --- 2. Render Doors ---
-      // roomData.doors.forEach((door) => {
-      //   if (door.isEmpty) return;
-      //   const doorTile = document.createElement("div");
-      //   doorTile.classList.add("tile", "door");
-      //   doorTile.style.position = "absolute";
-      //   doorTile.style.width = tileSize + "px";
-      //   doorTile.style.height = tileSize + "px";
-      //   doorTile.style.left = door.x + "px";
-      //   doorTile.style.top = door.y + "px";
-      //   doorTile.style.zIndex = 3;
-      //   overlay.appendChild(doorTile);
-      // });
-
-      // --- 3. Render Perimeter Walls ---
-
-      // Top and Bottom (horizontal walls)
+      // --- 2. Render Top and Bottom Walls ---
       for (let x = 0; x < cols; x++) {
         ["Top", "Bottom"].forEach((side) => {
           const wallX = room.left + x * tileSize;
           const wallY =
             side === "Top" ? room.top : room.top + (rows - 1) * tileSize;
+          const rotation =
+            side === "Bottom" ? "rotate(180deg)" : "rotate(0deg)";
 
-          const existingWall = isWallAtPosition(wallX, wallY);
-
-          // ✅ Skip wall if already placed, unless it's a corner
-          // if (existingWall && !isCorner(wallX, wallY)) return;
-
-          // Skip wall if another horizontal wall is placed above or below it
-          // if (isGuidelineViolated(wallX, wallY, "horizontal")) return;
-
-          const wall = document.createElement("div");
-          wall.classList.add("tile", "wall");
-          wall.style.position = "absolute";
-          wall.style.width = tileSize + "px";
-          wall.style.height = tileSize + "px";
-          wall.style.left = wallX + "px";
-          wall.style.top = wallY + "px";
-
-          // Rotate Bottom walls 180 degrees
-          if (side === "Bottom") {
-            wall.style.transform = "rotate(180deg)";
+          if (!isTileAtPosition(wallX, wallY, "wall", rotation)) {
+            const wall = document.createElement("div");
+            wall.classList.add("tile", "wall");
+            wall.style.position = "absolute";
+            wall.style.width = tileSize + "px";
+            wall.style.height = tileSize + "px";
+            wall.style.left = wallX + "px";
+            wall.style.top = wallY + "px";
+            wall.style.transform = rotation;
+            wall.style.zIndex = 2;
+            overlay.appendChild(wall);
           }
-
-          wall.style.zIndex = 2;
-          overlay.appendChild(wall);
         });
       }
 
-      // Left and Right (vertical walls)
+      // --- 3. Render Left and Right Walls ---
       for (let y = 0; y < rows; y++) {
         ["Left", "Right"].forEach((side) => {
           const wallX =
             side === "Left" ? room.left : room.left + (cols - 1) * tileSize;
           const wallY = room.top + y * tileSize;
+          const rotation = side === "Left" ? "rotate(270deg)" : "rotate(90deg)";
 
-          const existingWall = isWallAtPosition(wallX, wallY);
-
-          // ✅ Skip wall if already placed, unless it's a corner
-          // if (existingWall && !isCorner(wallX, wallY)) return;
-
-          // Skip wall if another vertical wall is already placed to the left or right of it
-          // if (isGuidelineViolated(wallX, wallY, "vertical")) return;
-
-          const wall = document.createElement("div");
-          wall.classList.add("tile", "wall");
-          wall.style.position = "absolute";
-          wall.style.width = tileSize + "px";
-          wall.style.height = tileSize + "px";
-          wall.style.left = wallX + "px";
-          wall.style.top = wallY + "px";
-
-          // Rotate walls depending on side
-          wall.style.transform =
-            side === "Left" ? "rotate(270deg)" : "rotate(90deg)";
-
-          wall.style.zIndex = 2;
-          overlay.appendChild(wall);
+          if (!isTileAtPosition(wallX, wallY, "wall", rotation)) {
+            const wall = document.createElement("div");
+            wall.classList.add("tile", "wall");
+            wall.style.position = "absolute";
+            wall.style.width = tileSize + "px";
+            wall.style.height = tileSize + "px";
+            wall.style.left = wallX + "px";
+            wall.style.top = wallY + "px";
+            wall.style.transform = rotation;
+            wall.style.zIndex = 2;
+            overlay.appendChild(wall);
+          }
         });
       }
     });
